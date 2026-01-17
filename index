@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devi Plywood and Hardware - Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #556B2F 0%, #6B8E23 50%, #DAA520 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            max-width: 550px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #556B2F 0%, #6B8E23 100%);
+            color: white;
+            padding: 35px 30px;
+            text-align: center;
+        }
+
+        .business-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .business-tagline {
+            font-size: 14px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .amount-entry {
+            padding: 30px;
+            background: #fffbf0;
+            border-bottom: 2px solid #f0e5c9;
+        }
+
+        .amount-entry.hidden {
+            display: none;
+        }
+
+        .amount-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #556B2F;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .amount-input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .rupee-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            font-weight: 600;
+            color: #DAA520;
+        }
+
+        #amountInput {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 3px solid #E8D9A7;
+            border-radius: 12px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #556B2F;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        #amountInput:focus {
+            outline: none;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 4px rgba(218, 165, 32, 0.15);
+        }
+
+        .proceed-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .proceed-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(218, 165, 32, 0.4);
+        }
+
+        .payment-section {
+            display: none;
+        }
+
+        .payment-section.active {
+            display: block;
+        }
+
+        .amount-display {
+            background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .amount-display-label {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        .amount-display-value {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .edit-amount {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .edit-amount:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .payment-methods {
+            display: flex;
+            border-bottom: 2px solid #f0e5c9;
+            background: #fffbf0;
+        }
+
+        .method-tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #8B7355;
+            font-size: 15px;
+        }
+
+        .method-tab:hover {
+            background: #f5f0e0;
+        }
+
+        .method-tab.active {
+            color: #556B2F;
+            border-bottom-color: #DAA520;
+            background: white;
+        }
+
+        .payment-form {
+            padding: 30px;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #556B2F;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E8D9A7;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.15);
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 25px;
+            border: 2px solid #E8D9A7;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(218, 165, 32, 0.2);
+        }
+
+        .card-icon.selected {
+            border-color: #DAA520;
+            background: #fffbf0;
+            transform: scale(1.1);
+        }
+
+        .upi-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .upi-option {
+            padding: 20px;
+            border: 2px solid #E8D9A7;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upi-option:hover {
+            border-color: #DAA520;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(218, 165, 32, 0.25);
+        }
+
+        .upi-option.selected {
+            border-color: #DAA520;
+            background: #fffbf0;
+            box-shadow: 0 4px 12px rgba(218, 165, 32, 0.35);
+        }
+
+        .upi-option.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #DAA520;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .wallet-option {
+            padding: 15px;
+            border: 2px solid #E8D9A7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+
+        .wallet-option:hover {
+            border-color: #DAA520;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(218, 165, 32, 0.25);
+        }
+
+        .wallet-option.selected {
+            border-color: #DAA520;
+            background: #fffbf0;
+            box-shadow: 0 4px 12px rgba(218, 165, 32, 0.35);
+        }
+
+        .wallet-option.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #DAA520;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .qr-scanner-section {
+            margin-top: 20px;
+            padding: 25px;
+            background: #fffbf0;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
+            border: 3px solid #E8D9A7;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            position: relative;
+        }
+
+        .qr-placeholder {
+            text-align: center;
+            color: #8B7355;
+        }
+
+        .qr-placeholder-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .scanner-button {
+            background: linear-gradient(135deg, #556B2F 0%, #6B8E23 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .scanner-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(85, 107, 47, 0.3);
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(218, 165, 32, 0.4);
+        }
+
+        .pay-button:active {
+            transform: translateY(0);
+        }
+
+        .secure-badge {
+            text-align: center;
+            margin-top: 20px;
+            color: #8B7355;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .secure-badge::before {
+            content: "🔒 ";
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .success-icon {
+            font-size: 70px;
+            color: #6B8E23;
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #8B7355;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #E8D9A7;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="business-name">Devi Plywood & Hardware</div>
+            <div class="business-tagline">Quality Products, Trusted Service</div>
+        </div>
+
+        <!-- Amount Entry Section -->
+        <div class="amount-entry" id="amountEntry">
+            <label class="amount-label">Enter Amount to Pay</label>
+            <div class="amount-input-wrapper">
+                <span class="rupee-symbol">₹</span>
+                <input type="number" id="amountInput" placeholder="0.00" step="0.01" min="1">
+            </div>
+            <button class="proceed-button" onclick="proceedToPayment()">Proceed to Payment</button>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="payment-section" id="paymentSection">
+            <div class="amount-display">
+                <div class="amount-display-label">Amount to Pay</div>
+                <div class="amount-display-value">₹<span id="displayAmount">0.00</span></div>
+                <button class="edit-amount" onclick="editAmount()">Edit Amount</button>
+            </div>
+
+            <div class="payment-methods">
+                <div class="method-tab active" data-method="card">💳 Card</div>
+                <div class="method-tab" data-method="upi">📱 UPI</div>
+                <div class="method-tab" data-method="wallet">👛 Wallet</div>
+            </div>
+
+            <div class="payment-form">
+                <!-- Card Payment -->
+                <div class="form-section active" id="card-section">
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        <div class="card-icons">
+                            <div class="card-icon" onclick="selectCard(this, 'visa')" style="color: #1434CB;">VISA</div>
+                            <div class="card-icon" onclick="selectCard(this, 'mastercard')" style="color: #EB001B;">MC</div>
+                            <div class="card-icon" onclick="selectCard(this, 'amex')" style="color: #006FCF;">AMEX</div>
+                            <div class="card-icon" onclick="selectCard(this, 'rupay')" style="color: #FF6000;">RUPAY</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cardholder Name</label>
+                        <input type="text" id="cardName" placeholder="John Doe">
+                    </div>
+                    <div class="card-row">
+                        <div class="form-group">
+                            <label>Expiry Date</label>
+                            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="password" id="cvv" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                    <button class="pay-button" onclick="processPayment('card')">Pay Now</button>
+                </div>
+
+                <!-- UPI Payment -->
+                <div class="form-section" id="upi-section">
+                    <div class="upi-options">
+                        <div class="upi-option" onclick="selectUPI(this, 'gpay')">
+                            <div style="font-size: 40px;">G</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Google Pay</div>
+                        </div>
+                        <div class="upi-option" onclick="selectUPI(this, 'phonepe')">
+                            <div style="font-size: 40px; color: #5f259f;">⚡</div>
+                            <div style="font-size: 12px; margin-top: 5px;">PhonePe</div>
+                        </div>
+                        <div class="upi-option" onclick="selectUPI(this, 'paytm')">
+                            <div style="font-size: 40px; color: #00BAF2;">₹</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Paytm</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>UPI ID</label>
+                        <input type="text" id="upiId" placeholder="yourname@upi">
+                    </div>
+
+                    <div class="divider">OR</div>
+
+                    <div class="qr-scanner-section">
+                        <h3 style="color: #556B2F; margin-bottom: 10px; font-size: 16px;">Scan QR Code</h3>
+                        <div class="qr-code" id="qrCode">
+                            <div class="qr-placeholder">
+                                <div class="qr-placeholder-icon">📷</div>
+                                <div>QR Code will appear here</div>
+                            </div>
+                        </div>
+                        <button class="scanner-button" onclick="generateQR()">Generate QR Code</button>
+                        <div style="margin-top: 15px; color: #8B7355; font-size: 13px;">
+                            Open your UPI app and scan to pay
+                        </div>
+                    </div>
+
+                    <button class="pay-button" onclick="processPayment('upi')">Verify Payment</button>
+                </div>
+
+                <!-- Wallet Payment -->
+                <div class="form-section" id="wallet-section">
+                    <div class="wallet-grid">
+                        <div class="wallet-option" onclick="selectWallet(this, 'paytm')">
+                            <div style="font-size: 40px; color: #00BAF2;">₹</div>
+                            <div style="margin-top: 10px; font-weight: 600;">Paytm Wallet</div>
+                        </div>
+                        <div class="wallet-option" onclick="selectWallet(this, 'mobikwik')">
+                            <div style="font-size: 40px; color: #E20B7B;">M</div>
+                            <div style="margin-top: 10px; font-weight: 600;">Mobikwik</div>
+                        </div>
+                        <div class="wallet-option" onclick="selectWallet(this, 'amazon')">
+                            <div style="font-size: 40px; color: #FF9900;">a</div>
+                            <div style="margin-top: 10px; font-weight: 600;">Amazon Pay</div>
+                        </div>
+                        <div class="wallet-option" onclick="selectWallet(this, 'freecharge')">
+                            <div style="font-size: 40px; color: #FFC800;">⚡</div>
+                            <div style="margin-top: 10px; font-weight: 600;">Freecharge</div>
+                        </div>
+                    </div>
+                    <button class="pay-button" onclick="processPayment('wallet')">Pay Now</button>
+                </div>
+
+                <!-- Success Message -->
+                <div class="success-message" id="successMessage">
+                    <div class="success-icon">✓</div>
+                    <h2 style="color: #6B8E23; margin-bottom: 15px; font-size: 24px;">Payment Successful!</h2>
+                    <p style="color: #556B2F; font-size: 16px; font-weight: 600; margin-bottom: 8px;">Thank you for your purchase!</p>
+                    <p style="color: #8B7355; font-size: 15px; margin-bottom: 15px;">We appreciate your business at<br><strong style="color: #556B2F;">Devi Plywood & Hardware</strong></p>
+                    <div style="background: #fffbf0; padding: 15px; border-radius: 10px; margin: 20px 0; border: 2px solid #E8D9A7;">
+                        <p style="color: #556B2F; font-weight: 600; margin-bottom: 5px;">Transaction ID: TXN<span id="txnId"></span></p>
+                        <p style="color: #8B7355; font-size: 14px; margin-top: 10px;">Amount Paid: ₹<span id="paidAmount"></span></p>
+                    </div>
+                    <p style="color: #DAA520; font-size: 16px; font-weight: 600; margin: 25px 0 15px 0;">Please visit again! 🙏</p>
+                    <p style="color: #8B7355; font-size: 13px; margin-bottom: 25px;">Your satisfaction is our priority</p>
+                    <button class="pay-button" onclick="resetForm()">Make Another Payment</button>
+                </div>
+
+                <div class="secure-badge">Secured by 256-bit SSL encryption</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedUPI = '';
+        let selectedWallet = '';
+        let currentAmount = 0;
+        let selectedCardType = '';
+
+        function selectCard(element, cardType) {
+            document.querySelectorAll('.card-icon').forEach(icon => icon.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedCardType = cardType;
+            
+            const cardInput = document.getElementById('cardNumber');
+            cardInput.focus();
+        }
+
+        function proceedToPayment() {
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            currentAmount = amount;
+            document.getElementById('displayAmount').textContent = amount.toFixed(2);
+            document.getElementById('amountEntry').classList.add('hidden');
+            document.getElementById('paymentSection').classList.add('active');
+        }
+
+        function editAmount() {
+            document.getElementById('paymentSection').classList.remove('active');
+            document.getElementById('amountEntry').classList.remove('hidden');
+        }
+
+        document.querySelectorAll('.method-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.method + '-section').classList.add('active');
+            });
+        });
+
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+
+            if (value.length >= 1) {
+                const firstDigit = value[0];
+                if (firstDigit === '4') {
+                    document.querySelectorAll('.card-icon').forEach(icon => icon.classList.remove('selected'));
+                    document.querySelectorAll('.card-icon')[0].classList.add('selected');
+                    selectedCardType = 'visa';
+                } else if (firstDigit === '5' || firstDigit === '2') {
+                    document.querySelectorAll('.card-icon').forEach(icon => icon.classList.remove('selected'));
+                    document.querySelectorAll('.card-icon')[1].classList.add('selected');
+                    selectedCardType = 'mastercard';
+                } else if (firstDigit === '3') {
+                    document.querySelectorAll('.card-icon').forEach(icon => icon.classList.remove('selected'));
+                    document.querySelectorAll('.card-icon')[2].classList.add('selected');
+                    selectedCardType = 'amex';
+                } else if (firstDigit === '6') {
+                    document.querySelectorAll('.card-icon').forEach(icon => icon.classList.remove('selected'));
+                    document.querySelectorAll('.card-icon')[3].classList.add('selected');
+                    selectedCardType = 'rupay';
+                }
+            }
+        });
+
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        function selectUPI(element, type) {
+            document.querySelectorAll('.upi-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedUPI = type;
+            
+            const upiInput = document.getElementById('upiId');
+            
+            const appNames = {
+                'gpay': 'Google Pay',
+                'phonepe': 'PhonePe',
+                'paytm': 'Paytm'
+            };
+            
+            console.log(`Selected ${appNames[type]} for payment of ₹${currentAmount.toFixed(2)}`);
+            
+            const upiLink = `upi://pay?pa=8741920569@ybl&pn=Devi Plywood and Hardware&am=${currentAmount.toFixed(2)}&cu=INR&tn=Payment for purchase`;
+            
+            element.setAttribute('data-upi-link', upiLink);
+        }
+
+        function selectWallet(element, type) {
+            document.querySelectorAll('.wallet-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedWallet = type;
+            
+            const walletNames = {
+                'paytm': 'Paytm Wallet',
+                'mobikwik': 'Mobikwik',
+                'amazon': 'Amazon Pay',
+                'freecharge': 'Freecharge'
+            };
+            
+            console.log(`Selected ${walletNames[type]} for payment of ₹${currentAmount.toFixed(2)}`);
+            
+            element.setAttribute('data-wallet-selected', type);
+        }
+
+        function generateQR() {
+            const qrCode = document.getElementById('qrCode');
+            
+            const upiString = `upi://pay?pa=8741920569@ybl&pn=Devi Plywood and Hardware&am=${currentAmount.toFixed(2)}&cu=INR&tn=Payment for purchase`;
+            
+            const qrSize = 200;
+            const cellSize = 4;
+            const cells = qrSize / cellSize;
+            
+            let qrPattern = '';
+            
+            for (let i = 0; i < cells; i++) {
+                for (let j = 0; j < cells; j++) {
+                    const hash = (i * 7 + j * 11 + upiString.charCodeAt((i + j) % upiString.length)) % 2;
+                    const color = hash === 0 ? '#556B2F' : '#fff';
+                    qrPattern += `<div style="width: ${cellSize}px; height: ${cellSize}px; background: ${color}; float: left;"></div>`;
+                }
+            }
+            
+            qrCode.innerHTML = `
+                <div style="width: 100%; height: 100%; background: white; padding: 10px; position: relative;">
+                    <div style="position: absolute; top: 10px; left: 10px; width: 35px; height: 35px; border: 3px solid #556B2F; background: white;">
+                        <div style="width: 15px; height: 15px; background: #556B2F; margin: 7px;"></div>
+                    </div>
+                    <div style="position: absolute; top: 10px; right: 10px; width: 35px; height: 35px; border: 3px solid #556B2F; background: white;">
+                        <div style="width: 15px; height: 15px; background: #556B2F; margin: 7px;"></div>
+                    </div>
+                    <div style="position: absolute; bottom: 10px; left: 10px; width: 35px; height: 35px; border: 3px solid #556B2F; background: white;">
+                        <div style="width: 15px; height: 15px; background: #556B2F; margin: 7px;"></div>
+                    </div>
+                    
+                    <div style="width: ${qrSize}px; height: ${qrSize}px; margin: 0 auto; overflow: hidden;">
+                        ${qrPattern}
+                    </div>
+                    
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 8px; border-radius: 8px; border: 2px solid #6B8E23;">
+                        <div style="font-weight: bold; color: #6B8E23; font-size: 14px;">UPI</div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 10px; padding: 10px; background: #fffbf0; border-radius: 8px;">
+                        <div style="font-size: 18px; font-weight: 700; color: #556B2F;">₹${currentAmount.toFixed(2)}</div>
+                        <div style="font-size: 11px; color: #8B7355; margin-top: 3px;">Devi Plywood & Hardware</div>
+                        <div style="font-size: 10px; color: #8B7355; margin-top: 2px;">8741920569@ybl</div>
+                    </div>
+                </div>
+            `;
+            
+            console.log('UPI Payment String:', upiString);
+            alert('QR Code Generated!\n\nUPI ID: 8741920569@ybl\nAmount: ₹' + currentAmount.toFixed(2) + '\n\nScan with any UPI app (GPay, PhonePe, Paytm, BHIM)');
+        }
+
+        function processPayment(method) {
+            let isValid = false;
+            let paymentMethod = '';
+
+            if (method === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const cardName = document.getElementById('cardName').value;
+                const expiry = document.getElementById('expiry').value;
+                const cvv = document.getElementById('cvv').value;
+
+                if (cardNumber && cardName && expiry && cvv && selectedCardType) {
+                    isValid = true;
+                    paymentMethod = `${selectedCardType.toUpperCase()} Card ending in ${cardNumber.slice(-4)}`;
+                } else if (cardNumber && cardName && expiry && cvv) {
+                    isValid = true;
+                    paymentMethod = `Card ending in ${cardNumber.slice(-4)}`;
+                } else {
+                    alert('Please fill in all card details and select card type');
+                }
+            } else if (method === 'upi') {
+                const upiId = document.getElementById('upiId').value;
+                const qrGenerated = document.getElementById('qrCode').innerHTML.includes('₹');
+                
+                if (selectedUPI) {
+                    isValid = true;
+                    const appNames = {
+                        'gpay': 'Google Pay',
+                        'phonepe': 'PhonePe',
+                        'paytm': 'Paytm'
+                    };
+                    paymentMethod = appNames[selectedUPI];
+                    
+                    alert(`Opening ${paymentMethod}...\n\nYou will be redirected to complete the payment of ₹${currentAmount.toFixed(2)}`);
+                } else if (upiId) {
+                    isValid = true;
+                    paymentMethod = `UPI - ${upiId}`;
+                } else if (qrGenerated) {
+                    isValid = true;
+                    paymentMethod = 'UPI QR Code';
+                } else {
+                    alert('Please enter UPI ID, select a UPI app, or generate QR code');
+                }
+            } else if (method === 'wallet') {
+                if (selectedWallet) {
+                    isValid = true;
+                    const walletNames = {
+                        'paytm': 'Paytm Wallet',
+                        'mobikwik': 'Mobikwik',
+                        'amazon': 'Amazon Pay',
+                        'freecharge': 'Freecharge'
+                    };
+                    paymentMethod = walletNames[selectedWallet];
+                    
+                    alert(`Redirecting to ${paymentMethod}...\n\nYou will be redirected to complete the payment of ₹${currentAmount.toFixed(2)}`);
+                } else {
+                    alert('Please select a wallet');
+                }
+            }
+
+            if (isValid) {
+                const txnId = Math.floor(100000000 + Math.random() * 900000000);
+                document.getElementById('txnId').textContent = txnId;
+                document.getElementById('paidAmount').textContent = currentAmount.toFixed(2);
+                
+                const successMsg = document.getElementById('successMessage');
+                const existingMethod = successMsg.querySelector('.payment-method-display');
+                if (existingMethod) {
+                    existingMethod.remove();
+                }
+                
+                const methodDisplay = document.createElement('p');
+                methodDisplay.className = 'payment-method-display';
+                methodDisplay.style.cssText = 'color: #8B7355; font-size: 14px; margin-top: 5px;';
+                methodDisplay.textContent = `Payment Method: ${paymentMethod}`;
+                
+                document.getElementById('paidAmount').parentNode.after(methodDisplay);
+                
+                document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+                document.getElementById('successMessage').classList.add('active');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('successMessage').classList.remove('active');
+            document.getElementById('paymentSection').classList.remove('active');
+            document.getElementById('amountEntry').classList.remove('hidden');
+            
+            document.getElementById('amountInput').value = '';
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('cardName').value = '';
+            document.getElementById('expiry').value = '';
+            document.getElementById('cvv').value = '';
+            document.getElementById('upiId').value = '';
+            
+            document.getElementById('qrCode').innerHTML = `
+                <div class="qr-placeholder">
+                    <div class="qr-placeholder-icon">📷</div>
+                    <div>QR Code will appear here</div>
+                </div>
+            `;
+            
+            document.querySelectorAll('.upi-option, .wallet-option, .card-icon').forEach(opt => opt.classList.remove('selected'));
+            selectedUPI = '';
+            selectedWallet = '';
+            selectedCardType = '';
+            currentAmount = 0;
+        }
+    </script>
+</body>
+</html>
